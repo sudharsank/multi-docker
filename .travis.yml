@@ -9,7 +9,6 @@ script:
   - docker run -e CI=true sudharsank/react-complex npm test
 
 dist: focal
-
 after_success:
   - docker build -t sudharsank/multi-client ./client
   - docker build -t sudharsank/multi-nginx ./nginx
