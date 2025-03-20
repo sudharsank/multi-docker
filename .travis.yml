@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t sudharsank/react-complex -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true sudharsank/react-complex npm test
+
+dist: focal
+
+after_success:
+  - docker build -t sudharsank/multi-client ./client
+  - docker build -t sudharsank/multi-nginx ./nginx
+  - docker build -t sudharsank/multi-server ./server
+  - docker build -t sudharsank/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push sudharsank/multi-client
+  - docker push sudharsank/multi-nginx
+  - docker push sudharsank/multi-server
+  - docker push sudharsank/multi-worker
